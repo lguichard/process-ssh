@@ -2,7 +2,7 @@
     "name": "lguichard/process-ssh",
     "description": "Package to use Laravel Process over SSH connections",
     "keywords": ["php", "ssh", "laravel", "process"],
-    "version": "1.0.0",
+    "version": "1.0.1",
     "license": "MIT",
     "authors": [
         {
