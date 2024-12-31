@@ -2,4 +2,12 @@
 
 namespace Bagel\ProcessSsh;
 
-final class ProcessSsh {}
+use Illuminate\Process\Factory;
+
+class ProcessSsh extends Factory
+{
+    public function newPendingProcess()
+    {
+        return (new PendingProcess($this))->withFakeHandlers($this->fakeHandlers);
+    }
+}
