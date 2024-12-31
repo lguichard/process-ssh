@@ -6,8 +6,55 @@ use Illuminate\Process\Factory;
 
 class ProcessSsh extends Factory
 {
-    public function newPendingProcess()
+    protected array $config = [
+        'extraOptions' => [], // Default value ensures PHPStan recognizes this key.
+    ];
+
+    /**
+     * Set the SSH configuration.
+     */
+    public function ssh(array $config): self
     {
-        return (new PendingProcess($this))->withFakeHandlers($this->fakeHandlers);
+        $this->config = $config;
+
+        return $this;
+    }
+
+    /**
+     * Get the SSH configuration.
+     */
+    public function sshConfig(): array
+    {
+        return $this->config;
+    }
+
+    /**
+     * Disable strict host key checking for SSH.
+     */
+    public function disableStrictHostKeyChecking(): self
+    {
+        $this->config['extraOptions'][] = '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null';
+
+        return $this;
+    }
+
+    /**
+     * Add an extra option to the SSH configuration.
+     */
+    public function addExtraOption(string $option): self
+    {
+        $this->config['extraOptions'][] = $option;
+
+        return $this;
+    }
+
+    /**
+     * Create a new pending process instance.
+     */
+    public function newPendingProcess(): PendingProcess
+    {
+        return (new PendingProcess($this))
+            ->setConfig($this->config)
+            ->withFakeHandlers($this->fakeHandlers);
     }
 }

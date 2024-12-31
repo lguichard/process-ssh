@@ -58,11 +58,12 @@
         "test:types": "phpstan analyse --ansi",
         "test:unit": "pest --colors=always --parallel",
         "test": [
-            "@test:lint",
+            "composer lint",
             "@test:types",
             "@test:unit"
         ],
         "test:unit:watch" : [
+            "Composer\\Config::disableProcessTimeout",
             "pest --watch=src,tests"
         ]
     }
