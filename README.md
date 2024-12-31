@@ -25,25 +25,6 @@ Install the package via Composer:
 composer require lguichard/process-ssh
 ```
 
-## Configuration
-
-After installation, register the provider into Laravel container
-
-```php
-use Bagel\ProcessSsh\Providers\ProcessSshServiceProvider;
-
-class AppServiceProvider extends ServiceProvider
-{
-    /**
-     * Register any application services.
-     */
-    public function register(): void
-    {
-        $this->app->register(ProcessSshServiceProvider::class);
-    ...
-}
-```
-
 ## Usage
 
 To execute a command over SSH, use the `Process` facade:
