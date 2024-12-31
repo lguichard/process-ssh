@@ -193,3 +193,61 @@ it('Process ssh can start', function () {
                $process->timeout === 60;
     });
 });
+
+it('can\'t pool processes with SSH enabled', function () {
+    Process::fake();
+
+    Process::ssh([
+        'host' => 'example.com',
+        'user' => 'ubuntu',
+        'password' => 'password',
+        'port' => 22,
+    ])->pool(function () {
+        //
+    });
+
+})->throws(InvalidArgumentException::class, 'Cannot pool processes with SSH enabled.');
+
+it('can\'t pipe processes with SSH enabled', function () {
+    Process::fake();
+
+    Process::ssh([
+        'host' => 'example.com',
+        'user' => 'ubuntu',
+        'password' => 'password',
+        'port' => 22,
+    ])->pipe(function () {
+        //
+    });
+
+})->throws(InvalidArgumentException::class, 'Cannot pipe processes with SSH enabled.');
+
+it('can\'t concurrently processes with SSH enabled', function () {
+    Process::fake();
+
+    Process::ssh([
+        'host' => 'example.com',
+        'user' => 'ubuntu',
+        'password' => 'password',
+        'port' => 22,
+    ])->concurrently(function () {
+        //
+    });
+
+})->throws(InvalidArgumentException::class, 'Cannot concurrently processes with SSH enabled.');
+
+// it('timeout process', function () {
+//     //Process::fake();
+
+//     $process = Process::ssh([
+//         'host' => '192.168.8.5',
+//         'user' => 'ubuntu',
+//         //'password' => 'password',
+//         'port' => 22,
+//     ])
+//     ->run('ls');
+
+// dump($process->errorOutput());
+// dump($process->output());
+
+// })->only();

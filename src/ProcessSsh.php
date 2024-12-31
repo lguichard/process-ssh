@@ -50,6 +50,34 @@ class ProcessSsh extends Factory
         return $this;
     }
 
+    public function pool(callable $callback)
+    {
+        if ($this->handleSsh) {
+            throw new \InvalidArgumentException('Cannot pool processes with SSH enabled.');
+        }
+
+        return parent::pool($callback);
+    }
+
+    public function pipe(callable|array $callback, ?callable $output = null)
+    {
+        if ($this->handleSsh) {
+            throw new \InvalidArgumentException('Cannot pipe processes with SSH enabled.');
+        }
+
+        return parent::pipe($callback, $output);
+    }
+
+    public function concurrently(callable $callback, ?callable $output = null)
+    {
+
+        if ($this->handleSsh) {
+            throw new \InvalidArgumentException('Cannot concurrently processes with SSH enabled.');
+        }
+
+        return parent::concurrently($callback, $output);
+    }
+
     /**
      * Create a new pending process instance.
      */
