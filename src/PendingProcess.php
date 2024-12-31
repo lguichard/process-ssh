@@ -11,9 +11,9 @@ class PendingProcess extends BasePendingProcess
 {
     protected string $host;
 
-    protected ?string $user;
+    protected ?string $user = null;
 
-    protected ?string $password;
+    protected ?string $password = null;
 
     protected ?int $port = 22; // Default SSH port
 
@@ -38,13 +38,17 @@ class PendingProcess extends BasePendingProcess
 
         // Assign configuration values to class properties
         foreach ($config as $key => $value) {
-            if (property_exists($this, $key)) {
-                $this->{$key} = $value;
-            }
-
             // Handle private key option separately
             if ($key == 'private_key') {
-                $this->extraOptions['private_key'] = '-i '.$value;
+                $this->extraOptions[] = '-i '.$value;
+            }
+
+            if (property_exists($this, $key)) {
+                if ($key == 'extraOptions') {
+                    $this->extraOptions = array_merge($this->extraOptions, $value);
+                } else {
+                    $this->{$key} = $value;
+                }
             }
         }
 

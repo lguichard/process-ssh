@@ -60,6 +60,58 @@ it('exception thrown when host is not set', function () {
     Process::ssh([])->run('ls');
 })->throws(InvalidArgumentException::class, 'Host is required for SSH connections.');
 
+it('Process run without user / password not set', function () {
+    Process::fake();
+
+    $process = Process::ssh([
+        'host' => 'example.com',
+    ])
+        ->disableStrictHostKeyChecking()
+        ->run('ls -al');
+
+    expect($process->command())->toBe("ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null example.com 'bash -se' << \EOF-PROCESS-SSH".PHP_EOL.'ls -al'.PHP_EOL.'EOF-PROCESS-SSH');
+
+    Process::assertRan('ls -al');
+});
+
+it('Process run all parameters', function () {
+    Process::fake();
+
+    $process = Process::ssh([
+        'host' => 'example.com',
+        'user' => 'ubuntu',
+        'password' => 'password',
+        'port' => 22,
+        'extraOptions' => [
+            '-o StrictHostKeyChecking=no',
+            '-o UserKnownHostsFile=/dev/null',
+        ],
+    ])
+        ->disableStrictHostKeyChecking()
+        ->run('ls -al');
+
+    expect($process->command())->toBe("sshpass -p 'password' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ubuntu@example.com 'bash -se' << \EOF-PROCESS-SSH".PHP_EOL.'ls -al'.PHP_EOL.'EOF-PROCESS-SSH');
+
+    Process::assertRan('ls -al');
+});
+
+it('Process run with private key', function () {
+    Process::fake();
+
+    $process = Process::ssh([
+        'host' => 'example.com',
+        'user' => 'ubuntu',
+        'port' => 22,
+        'private_key' => '/path/to/key',
+    ])
+        ->disableStrictHostKeyChecking()
+        ->run('ls -al');
+
+    expect($process->command())->toBe("ssh -i /path/to/key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ubuntu@example.com 'bash -se' << \EOF-PROCESS-SSH".PHP_EOL.'ls -al'.PHP_EOL.'EOF-PROCESS-SSH');
+
+    Process::assertRan('ls -al');
+});
+
 it('exception thrown process run with array', function () {
     Process::fake();
 
