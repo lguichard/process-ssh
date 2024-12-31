@@ -6,9 +6,9 @@ use Illuminate\Process\Factory;
 
 class ProcessSsh extends Factory
 {
-    protected array $config = [
-        'extraOptions' => [], // Default value ensures PHPStan recognizes this key.
-    ];
+    protected array $config = [];
+
+    protected bool $handleSsh = false;
 
     /**
      * Set the SSH configuration.
@@ -16,6 +16,8 @@ class ProcessSsh extends Factory
     public function ssh(array $config): self
     {
         $this->config = $config;
+
+        $this->handleSsh = true;
 
         return $this;
     }
@@ -54,7 +56,7 @@ class ProcessSsh extends Factory
     public function newPendingProcess(): PendingProcess
     {
         return (new PendingProcess($this))
-            ->setConfig($this->config)
+            ->setConfig($this->config, $this->handleSsh)
             ->withFakeHandlers($this->fakeHandlers);
     }
 }

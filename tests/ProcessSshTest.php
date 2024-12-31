@@ -78,7 +78,33 @@ it('exception thrown process start with array', function () {
 
 })->throws(InvalidArgumentException::class, 'Array commands are not supported for SSH connections');
 
-it('Process can run', function () {
+it('Process can run normaly', function () {
+    Process::fake();
+
+    Process::run('ls');
+
+    Process::assertRan('ls');
+
+    Process::assertRan(function (PendingProcess $process, FakeProcessResult $result) {
+        return $process->command === 'ls' &&
+               $process->timeout === 60;
+    });
+});
+
+it('Process can start normaly', function () {
+    Process::fake();
+
+    Process::start('ls');
+
+    Process::assertRan('ls');
+
+    Process::assertRan(function (PendingProcess $process, FakeProcessResult $result) {
+        return $process->command === 'ls' &&
+               $process->timeout === 60;
+    });
+});
+
+it('Process ssh can run', function () {
     Process::fake();
 
     Process::ssh([
@@ -97,7 +123,7 @@ it('Process can run', function () {
     });
 });
 
-it('Process can start', function () {
+it('Process ssh can start', function () {
     Process::fake();
 
     Process::ssh([

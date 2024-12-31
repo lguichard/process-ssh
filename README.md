@@ -40,8 +40,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app()->register(ProcessSshServiceProvider::class);
-    }
+        $this->app->register(ProcessSshServiceProvider::class);
+    ...
 }
 ```
 

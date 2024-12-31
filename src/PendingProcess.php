@@ -19,11 +19,19 @@ class PendingProcess extends BasePendingProcess
 
     protected array $extraOptions = [];
 
+    private bool $handleSsh = false;
+
     /**
      * Set configuration for the SSH connection.
      */
-    public function setConfig(array $config)
+    public function setConfig(array $config, bool $handleSsh)
     {
+        $this->handleSsh = $handleSsh;
+
+        if (! $this->handleSsh && empty($config)) {
+            return $this;
+        }
+
         if (! isset($config['host'])) {
             throw new \InvalidArgumentException('Host is required for SSH connections.');
         }
@@ -48,6 +56,10 @@ class PendingProcess extends BasePendingProcess
      */
     public function buildCommand(array|string|null $command): array|string|null
     {
+        if (! $this->handleSsh) {
+            return $command;
+        }
+
         if (in_array($this->host, ['local', 'localhost', '127.0.0.1'])) {
             // Return the command directly for local execution
             return $command;
@@ -68,7 +80,7 @@ class PendingProcess extends BasePendingProcess
                 .$delimiter;
         }
 
-        return $commandsWrapped;
+        return implode(' && ', $commandsWrapped);
     }
 
     /**
@@ -111,7 +123,7 @@ class PendingProcess extends BasePendingProcess
      */
     protected function exceptionCondition($command): bool
     {
-        return is_array($command);
+        return is_array($command) && $this->handleSsh;
     }
 
     /**
@@ -144,9 +156,6 @@ class PendingProcess extends BasePendingProcess
     protected function toSymfonyProcess(array|string|null $command)
     {
         $command = $this->buildCommand($command);
-
-        // Combine commands into a single string
-        $command = implode(' && ', $command);
 
         return parent::toSymfonyProcess($command);
     }
