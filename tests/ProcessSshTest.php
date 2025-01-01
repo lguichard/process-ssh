@@ -77,7 +77,7 @@ it('process useMultiplexing', function () {
     expect($process->sshConfig()['extraOptions'])->toBe([
         '-o ControlMaster=yes -o ControlPath=/tmp/ssh_mux_%h-%p -o ControlPersist=5m',
     ]);
-})->only();
+});
 
 it('exception thrown when host is not set', function () {
     Process::ssh([])->run('ls');
