@@ -40,6 +40,17 @@ class ProcessSsh extends Factory
         return $this;
     }
 
+    public function useMultiplexing(string $controlPath = '', string $controlMaster = 'auto', string $controlPersist = '10m'): self
+    {
+        if ($controlPath === '') {
+            $controlPath = '/tmp/ssh_mux_%h';
+        }
+
+        $this->config['extraOptions'][] = '-o ControlMaster='.$controlMaster.' -o ControlPath='.$controlPath.' -o ControlPersist='.$controlPersist;
+
+        return $this;
+    }
+
     /**
      * Add an extra option to the SSH configuration.
      */
