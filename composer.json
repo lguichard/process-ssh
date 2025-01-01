@@ -57,6 +57,7 @@
         "test:types": "phpstan analyse --ansi",
         "test:unit": "pest --colors=always --parallel",
         "test": [
+            "rector",
             "composer lint",
             "@test:types",
             "@test:unit"
