@@ -82,6 +82,34 @@ $result = Process::ssh([
     ->run('ls -al');
 ```
 
+### Use the favorites method provided by Laravel's Process class.
+
+For more information, refer to the official documentation : https://laravel.com/docs/11.x/processes
+
+```php
+[$result1, $result2] = Process::ssh([
+        'host' => '192.168.1.10',
+        'user' => 'username',
+        'password' => 'your_password',
+    ])
+    ->concurrently(function (Pool $pool) {
+        $pool->command('ls -al');
+        $pool->command('whoami');
+    });
+```
+
+```php
+$result = Process::ssh([
+        'host' => '192.168.1.10',
+        'user' => 'username',
+        'password' => 'your_password',
+    ])
+    ->pool(function (Pool $pool) {
+        $pool->command('ls -al');
+        $pool->command('whoami');
+    });
+```
+
 ## Testing
 
 To run the package's tests:
