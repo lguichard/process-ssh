@@ -10,8 +10,6 @@ class ProcessSshServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->bind(Factory::class, function () {
-            return new ProcessSsh;
-        });
+        $this->app->bind(Factory::class, fn (): \Bagel\ProcessSsh\ProcessSsh => new ProcessSsh);
     }
 }

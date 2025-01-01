@@ -33,6 +33,8 @@ To execute a command over SSH, use the `Process` facade:
 ### Basic Usage
 
 ```php
+use Illuminate\Support\Facades\Process;
+
 $result = Process::ssh([
         'host' => '192.168.1.10',
         'user' => 'username',
