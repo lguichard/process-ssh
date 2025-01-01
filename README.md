@@ -87,6 +87,18 @@ $result = Process::ssh([
 For more information, refer to the official documentation : https://laravel.com/docs/11.x/processes
 
 ```php
+$process = Process::ssh([
+        'host' => '192.168.1.10',
+        'user' => 'username',
+        'password' => 'your_password',
+    ])
+    ->start('bash import.sh');
+
+$result = $process->wait();
+
+```
+
+```php
 [$result1, $result2] = Process::ssh([
         'host' => '192.168.1.10',
         'user' => 'username',
