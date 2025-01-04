@@ -63,6 +63,29 @@ it('process disableStrictHostKeyChecking', function () {
     ]);
 });
 
+it('process useMultiplexing', function () {
+    $process = Process::ssh([
+        'host' => '192.168.85.5',
+        'user' => 'ubuntu',
+        'port' => 22,
+    ])
+        ->useMultiplexing();
+
+    expect($process->sshConfig()['extraOptions'])->toBe([
+        '-o ControlMaster=auto -o ControlPath=/tmp/ssh_mux_%h -o ControlPersist=10m',
+    ]);
+
+    $process = Process::ssh([
+        'host' => '192.168.85.5',
+        'user' => 'ubuntu',
+        'port' => 22,
+    ])->useMultiplexing('/tmp/ssh_mux_%h-%p', 'yes', '5m');
+
+    expect($process->sshConfig()['extraOptions'])->toBe([
+        '-o ControlMaster=yes -o ControlPath=/tmp/ssh_mux_%h-%p -o ControlPersist=5m',
+    ]);
+});
+
 it('exception thrown when host is not set', function () {
     Process::ssh([])->run('ls');
 })->throws(InvalidArgumentException::class, 'Host is required for SSH connections.');

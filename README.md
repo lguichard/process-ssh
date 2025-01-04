@@ -122,6 +122,31 @@ $result = Process::ssh([
     });
 ```
 
+### SSH multiplexing
+
+If you want to execute multiple commands over the same SSH connection, SSH multiplexing allows you to reuse an existing TCP connection, improving efficiency and reducing overhead.
+
+```php
+$process = Process::ssh([
+    'host' => '192.168.85.5',
+    'user' => 'ubuntu',
+    'port' => 22,
+])->useMultiplexing();
+
+$commands = [
+    'ls -al', 'whoami',
+    'pwd', 'uname -a',
+    'df -h', 'top -bn1',
+    'cat /etc/os-release', 'netstat -tuln',
+    'uptime', 'tail -n 20 /var/log/syslog',
+];
+
+foreach ($commands as $command) {
+    $process->run($command)->output();
+}
+
+```
+
 ## Testing
 
 To run the package's tests:
