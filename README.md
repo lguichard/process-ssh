@@ -2,7 +2,6 @@
     <img src="https://raw.githubusercontent.com/lguichard/process-ssh/master/assets/visual.webp" height="300" alt="Laravel Process over SSH">
     <p align="center">
         <a href="https://github.com/lguichard/process-ssh/actions"><img alt="GitHub Workflow Status (master)" src="https://github.com/lguichard/process-ssh/actions/workflows/tests.yml/badge.svg"></a>
-        <a href="https://packagist.org/packages/lguichard/process-ssh"><img alt="Total Downloads" src="https://img.shields.io/packagist/dt/lguichard/process-ssh"></a>
         <a href="https://packagist.org/packages/lguichard/process-ssh"><img alt="Latest Version" src="https://img.shields.io/packagist/v/lguichard/process-ssh"></a>
     </p>
 </p>
