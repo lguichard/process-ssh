@@ -22,6 +22,18 @@ class PendingProcess extends BasePendingProcess
     private bool $handleSsh = false;
 
     /**
+     * Override the command string to handle SSH commands.
+     */
+    public function command(array|string $command)
+    {
+        $command = $this->buildCommand($command);
+
+        $this->command = $command;
+
+        return $this;
+    }
+
+    /**
      * Set configuration for the SSH connection.
      */
     public function setConfig(array $config, bool $handleSsh)
@@ -60,6 +72,10 @@ class PendingProcess extends BasePendingProcess
      */
     public function buildCommand(array|string|null $command): array|string|null
     {
+        if (! $command) {
+            return $command;
+        }
+
         if (! $this->handleSsh) {
             return $command;
         }
@@ -161,6 +177,8 @@ class PendingProcess extends BasePendingProcess
     {
         $command = $this->buildCommand($command);
 
-        return parent::toSymfonyProcess($command);
+        $process = parent::toSymfonyProcess($command);
+
+        return $process;
     }
 }
