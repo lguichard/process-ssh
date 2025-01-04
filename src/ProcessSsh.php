@@ -40,6 +40,17 @@ class ProcessSsh extends Factory
         return $this;
     }
 
+    public function useMultiplexing(string $controlPath = '', string $controlMaster = 'auto', string $controlPersist = '10m'): self
+    {
+        if ($controlPath === '') {
+            $controlPath = '/tmp/ssh_mux_%h';
+        }
+
+        $this->config['extraOptions'][] = '-o ControlMaster='.$controlMaster.' -o ControlPath='.$controlPath.' -o ControlPersist='.$controlPersist;
+
+        return $this;
+    }
+
     /**
      * Add an extra option to the SSH configuration.
      */
@@ -50,15 +61,6 @@ class ProcessSsh extends Factory
         return $this;
     }
 
-    public function pool(callable $callback)
-    {
-        if ($this->handleSsh) {
-            throw new \InvalidArgumentException('Cannot pool processes with SSH enabled.');
-        }
-
-        return parent::pool($callback);
-    }
-
     public function pipe(callable|array $callback, ?callable $output = null)
     {
         if ($this->handleSsh) {
@@ -66,16 +68,6 @@ class ProcessSsh extends Factory
         }
 
         return parent::pipe($callback, $output);
-    }
-
-    public function concurrently(callable $callback, ?callable $output = null)
-    {
-
-        if ($this->handleSsh) {
-            throw new \InvalidArgumentException('Cannot concurrently processes with SSH enabled.');
-        }
-
-        return parent::concurrently($callback, $output);
     }
 
     /**

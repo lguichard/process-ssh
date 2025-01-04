@@ -84,6 +84,71 @@ $result = Process::ssh([
     ->run('ls -al');
 ```
 
+### Use the favorites method provided by Laravel's Process class.
+
+For more information, refer to the official documentation : https://laravel.com/docs/11.x/processes
+
+```php
+$process = Process::ssh([
+        'host' => '192.168.1.10',
+        'user' => 'username',
+        'password' => 'your_password',
+    ])
+    ->start('bash import.sh');
+
+$result = $process->wait();
+
+```
+
+```php
+[$result1, $result2] = Process::ssh([
+        'host' => '192.168.1.10',
+        'user' => 'username',
+        'password' => 'your_password',
+    ])
+    ->concurrently(function (Pool $pool) {
+        $pool->command('ls -al');
+        $pool->command('whoami');
+    });
+```
+
+```php
+$result = Process::ssh([
+        'host' => '192.168.1.10',
+        'user' => 'username',
+        'password' => 'your_password',
+    ])
+    ->pool(function (Pool $pool) {
+        $pool->command('ls -al');
+        $pool->command('whoami');
+    });
+```
+
+### SSH multiplexing
+
+If you want to execute multiple commands over the same SSH connection, SSH multiplexing allows you to reuse an existing TCP connection, improving efficiency and reducing overhead.
+
+```php
+$process = Process::ssh([
+    'host' => '192.168.85.5',
+    'user' => 'ubuntu',
+    'port' => 22,
+])->useMultiplexing();
+
+$commands = [
+    'ls -al', 'whoami',
+    'pwd', 'uname -a',
+    'df -h', 'top -bn1',
+    'cat /etc/os-release', 'netstat -tuln',
+    'uptime', 'tail -n 20 /var/log/syslog',
+];
+
+foreach ($commands as $command) {
+    $process->run($command)->output();
+}
+
+```
+
 ## Testing
 
 To run the package's tests:
