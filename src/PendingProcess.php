@@ -72,7 +72,7 @@ class PendingProcess extends BasePendingProcess
      */
     public function buildCommand(array|string|null $command): array|string|null
     {
-        if (! $command) {
+        if ($command === '' || $command === '0' || $command === [] || $command === null) {
             return $command;
         }
 
@@ -177,8 +177,6 @@ class PendingProcess extends BasePendingProcess
     {
         $command = $this->buildCommand($command);
 
-        $process = parent::toSymfonyProcess($command);
-
-        return $process;
+        return parent::toSymfonyProcess($command);
     }
 }
