@@ -7,7 +7,7 @@ use Illuminate\Process\Pool;
 use Illuminate\Support\Facades\Process;
 use Orchestra\Testbench\TestCase;
 
-uses(TestCase::class)->beforeEach(function () {
+uses(TestCase::class)->beforeEach(function (): void {
     $this->app->register(ProcessSshServiceProvider::class);
 
     $this->basicSshConfig = [
@@ -17,7 +17,7 @@ uses(TestCase::class)->beforeEach(function () {
     ];
 });
 
-it('process config set', function () {
+it('process config set', function (): void {
     $process = Process::ssh([
         'host' => '192.178.0.1',
         'user' => 'ubuntu',
@@ -39,7 +39,7 @@ it('process config set', function () {
     expect($process->sshConfig()['private_key'])->toBe('/path/to/key');
 });
 
-it('process add extra options', function () {
+it('process add extra options', function (): void {
     $process = Process::ssh([
         'host' => '192.178.0.1',
         'user' => 'ubuntu',
@@ -51,7 +51,7 @@ it('process add extra options', function () {
     ]);
 });
 
-it('process disableStrictHostKeyChecking', function () {
+it('process disableStrictHostKeyChecking', function (): void {
     $process = Process::ssh([
         'host' => '192.178.0.1',
         'user' => 'ubuntu',
@@ -63,7 +63,7 @@ it('process disableStrictHostKeyChecking', function () {
     ]);
 });
 
-it('process useMultiplexing', function () {
+it('process useMultiplexing', function (): void {
     $process = Process::ssh([
         'host' => '192.168.85.5',
         'user' => 'ubuntu',
@@ -86,11 +86,11 @@ it('process useMultiplexing', function () {
     ]);
 });
 
-it('exception thrown when host is not set', function () {
+it('exception thrown when host is not set', function (): void {
     Process::ssh([])->run('ls');
 })->throws(InvalidArgumentException::class, 'Host is required for SSH connections.');
 
-it('Process run without user / password not set', function () {
+it('Process run without user / password not set', function (): void {
     Process::fake();
 
     $process = Process::ssh([
@@ -104,7 +104,7 @@ it('Process run without user / password not set', function () {
     Process::assertRan('ls -al');
 });
 
-it('Process run all parameters', function () {
+it('Process run all parameters', function (): void {
     Process::fake();
 
     $process = Process::ssh([
@@ -125,7 +125,7 @@ it('Process run all parameters', function () {
     Process::assertRan('ls -al');
 });
 
-it('Process run with private key', function () {
+it('Process run with private key', function (): void {
     Process::fake();
 
     $process = Process::ssh([
@@ -142,33 +142,29 @@ it('Process run with private key', function () {
     Process::assertRan('ls -al');
 });
 
-it('Process can run normaly', function () {
+it('Process can run normaly', function (): void {
     Process::fake();
 
     Process::run('ls');
 
     Process::assertRan('ls');
 
-    Process::assertRan(function (PendingProcess $process, FakeProcessResult $result) {
-        return $process->command === 'ls' &&
-               $process->timeout === 60;
-    });
+    Process::assertRan(fn (PendingProcess $process, FakeProcessResult $result): bool => $process->command === 'ls' &&
+           $process->timeout === 60);
 });
 
-it('Process can start normaly', function () {
+it('Process can start normaly', function (): void {
     Process::fake();
 
     Process::start('ls');
 
     Process::assertRan('ls');
 
-    Process::assertRan(function (PendingProcess $process, FakeProcessResult $result) {
-        return $process->command === 'ls' &&
-               $process->timeout === 60;
-    });
+    Process::assertRan(fn (PendingProcess $process, FakeProcessResult $result): bool => $process->command === 'ls' &&
+           $process->timeout === 60);
 });
 
-it('Process ssh can run', function () {
+it('Process ssh can run', function (): void {
     Process::fake();
 
     Process::ssh([
@@ -181,13 +177,11 @@ it('Process ssh can run', function () {
 
     Process::assertRan('ls');
 
-    Process::assertRan(function (PendingProcess $process, FakeProcessResult $result) {
-        return $process->command === 'ls' &&
-               $process->timeout === 60;
-    });
+    Process::assertRan(fn (PendingProcess $process, FakeProcessResult $result): bool => $process->command === 'ls' &&
+           $process->timeout === 60);
 });
 
-it('Process ssh can start', function () {
+it('Process ssh can start', function (): void {
     Process::fake();
 
     Process::ssh([
@@ -200,16 +194,14 @@ it('Process ssh can start', function () {
 
     Process::assertRan('ls');
 
-    Process::assertRan(function (PendingProcess $process, FakeProcessResult $result) {
-        return $process->command === 'ls' &&
-               $process->timeout === 60;
-    });
+    Process::assertRan(fn (PendingProcess $process, FakeProcessResult $result): bool => $process->command === 'ls' &&
+           $process->timeout === 60);
 });
 
-it('invoke process::concurrently', function () {
+it('invoke process::concurrently', function (): void {
     Process::fake();
 
-    $process = Process::concurrently(function (Pool $pool) {
+    $process = Process::concurrently(function (Pool $pool): void {
         $pool->command('ls -al');
         $pool->command('whoami');
     });
@@ -221,10 +213,10 @@ it('invoke process::concurrently', function () {
     Process::assertRan('whoami');
 });
 
-it('invoke process::concurrently ssh', function () {
+it('invoke process::concurrently ssh', function (): void {
     Process::fake();
 
-    $process = Process::ssh($this->basicSshConfig)->concurrently(function (Pool $pool) {
+    $process = Process::ssh($this->basicSshConfig)->concurrently(function (Pool $pool): void {
         $pool->command('ls -al');
         $pool->command('whoami');
     });
@@ -234,10 +226,10 @@ it('invoke process::concurrently ssh', function () {
 
 });
 
-it('invoke process::pool', function () {
+it('invoke process::pool', function (): void {
     Process::fake();
 
-    $process = Process::pool(function (Pool $pool) {
+    $process = Process::pool(function (Pool $pool): void {
         $pool->command('ls -al');
         $pool->command('whoami');
     });
@@ -250,10 +242,10 @@ it('invoke process::pool', function () {
     Process::assertRan('whoami');
 });
 
-it('invoke process::pool ssh', function () {
+it('invoke process::pool ssh', function (): void {
     Process::fake();
 
-    $process = Process::ssh($this->basicSshConfig)->pool(function (Pool $pool) {
+    $process = Process::ssh($this->basicSshConfig)->pool(function (Pool $pool): void {
         $pool->command('ls -al');
         $pool->command('whoami');
     });
@@ -264,16 +256,28 @@ it('invoke process::pool ssh', function () {
 
 });
 
-it('exception thrown process run with array', function () {
+it('exception thrown process run with array', function (): void {
     Process::fake();
 
     Process::ssh([
         'host' => '127.0.0.1',
     ])->run(['ls', '-al']);
-
 })->throws(InvalidArgumentException::class, 'Array commands are not supported for SSH connections.');
 
-it('exception thrown process start with array', function () {
+it('can\'t pipe processes with SSH enabled', function (): void {
+    Process::fake();
+
+    Process::ssh([
+        'host' => 'example.com',
+        'user' => 'ubuntu',
+        'password' => 'password',
+        'port' => 22,
+    ])->pipe(function (): void {
+        //
+    });
+})->throws(InvalidArgumentException::class, 'Cannot pipe processes with SSH enabled.');
+
+it('exception thrown process start with array', function (): void {
     Process::fake();
 
     Process::ssh([
@@ -282,7 +286,7 @@ it('exception thrown process start with array', function () {
 
 })->throws(InvalidArgumentException::class, 'Array commands are not supported for SSH connections.');
 
-it('invoke process::pipe', function () {
+it('invoke process::pipe', function (): void {
     Process::fake();
 
     $process = Process::ssh($this->basicSshConfig)->pipe([

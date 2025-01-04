@@ -36,11 +36,11 @@ class PendingProcess extends BasePendingProcess
     /**
      * Set configuration for the SSH connection.
      */
-    public function setConfig(array $config, bool $handleSsh)
+    public function setConfig(array $config, bool $handleSsh): static
     {
         $this->handleSsh = $handleSsh;
 
-        if (! $this->handleSsh && empty($config)) {
+        if (! $this->handleSsh && $config === []) {
             return $this;
         }
 
@@ -72,7 +72,7 @@ class PendingProcess extends BasePendingProcess
      */
     public function buildCommand(array|string|null $command): array|string|null
     {
-        if (! $command) {
+        if ($command === '' || $command === '0' || $command === [] || $command === null) {
             return $command;
         }
 
@@ -141,7 +141,7 @@ class PendingProcess extends BasePendingProcess
      * @param  mixed  $command  The command to check.
      * @return bool True if the command is invalid, otherwise false.
      */
-    protected function exceptionCondition($command): bool
+    protected function exceptionCondition(mixed $command): bool
     {
         return is_array($command) && $this->handleSsh;
     }
@@ -177,8 +177,6 @@ class PendingProcess extends BasePendingProcess
     {
         $command = $this->buildCommand($command);
 
-        $process = parent::toSymfonyProcess($command);
-
-        return $process;
+        return parent::toSymfonyProcess($command);
     }
 }
