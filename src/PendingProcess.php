@@ -171,6 +171,25 @@ class PendingProcess extends BasePendingProcess
     }
 
     /**
+     * Specify the fake process result handlers for the pending process.
+     */
+    public function withFakeHandlers(array $fakeHandlers)
+    {
+        if (! $this->handleSsh) {
+            $this->fakeHandlers = $fakeHandlers;
+        } else {
+            $updatedArray = [];
+            foreach ($fakeHandlers as $key => $value) {
+                $newKey = $this->buildCommand($key);
+                $updatedArray[$newKey] = $value;
+            }
+            $this->fakeHandlers = $updatedArray;
+        }
+
+        return $this;
+    }
+
+    /**
      * Convert the command to a Symfony Process object.
      */
     protected function toSymfonyProcess(array|string|null $command)
