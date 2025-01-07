@@ -39,6 +39,22 @@ it('process config set', function (): void {
     expect($process->sshConfig()['private_key'])->toBe('/path/to/key');
 });
 
+it('ssh config with empty password', function (): void {
+    Process::fake();
+
+    $process = Process::ssh([
+        'host' => '192.178.0.1',
+        'user' => 'username',
+        'password' => '',
+    ])
+        ->disableStrictHostKeyChecking()
+        ->run('ls -al');
+
+    expect($process->command())->toBe("ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null username@192.178.0.1 'bash -se' << \EOF-PROCESS-SSH".PHP_EOL.'ls -al'.PHP_EOL.'EOF-PROCESS-SSH');
+
+    Process::assertRan('ls -al');
+});
+
 it('process add extra options', function (): void {
     $process = Process::ssh([
         'host' => '192.178.0.1',

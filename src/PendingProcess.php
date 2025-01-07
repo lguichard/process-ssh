@@ -113,7 +113,7 @@ class PendingProcess extends BasePendingProcess
      */
     protected function buildPasswordCommand(): string
     {
-        if ($this->password !== null) {
+        if ($this->password !== null && $this->password !== '') {
             return 'sshpass -p \''.$this->password.'\' ';
         }
 
