@@ -3,6 +3,8 @@
 namespace Bagel\ProcessSsh;
 
 use Illuminate\Process\PendingProcess as BasePendingProcess;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 /**
  * PendingProcess handles the construction and execution of SSH commands.
@@ -168,6 +170,15 @@ class PendingProcess extends BasePendingProcess
         }
 
         return parent::start($command, $output);
+    }
+
+    /**
+     * Get the fake handler for the given command, if applicable.
+     */
+    protected function fakeFor(string $command)
+    {
+        return (new Collection($this->fakeHandlers))
+            ->first(fn ($handler, $pattern): bool => $pattern === '*' || Str::contains($command, $pattern));
     }
 
     /**

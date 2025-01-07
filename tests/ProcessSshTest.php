@@ -294,3 +294,31 @@ it('invoke process::pipe', function (): void {
         'whoami',
     ]);
 })->throws(InvalidArgumentException::class, 'Cannot pipe processes with SSH enabled.');
+
+it('fake result Process::run', function (): void {
+    Process::fake([
+        'ls -al' => Process::result(
+            output: 'test',
+            errorOutput: '',
+            exitCode: 1,
+        ),
+    ]);
+
+    $process = Process::ssh($this->basicSshConfig)->run('ls -al');
+
+    expect($process->output())->toBe("test\n");
+});
+
+it('fake result Process::start', function (): void {
+    Process::fake([
+        'ls -al' => Process::result(
+            output: 'test',
+            errorOutput: '',
+            exitCode: 1,
+        ),
+    ]);
+
+    $process = Process::ssh($this->basicSshConfig)->start('ls -al');
+
+    expect($process->wait()->output())->toBe("test\n");
+});
