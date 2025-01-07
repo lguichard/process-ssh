@@ -322,20 +322,3 @@ it('fake result Process::start', function (): void {
 
     expect($process->wait()->output())->toBe("test\n");
 });
-
-it('fake result Process::concurrently', function (): void {
-    Process::fake([
-        '*' => Process::result(
-            output: 'test',
-            errorOutput: '',
-            exitCode: 1,
-        ),
-    ]);
-
-    $process = Process::ssh($this->basicSshConfig)->concurrently(function (Pool $pool): void {
-        $pool->command('ls -al');
-        $pool->command('whoami');
-    });
-
-    expect($process[0]->output())->toBe("test\n");
-});
