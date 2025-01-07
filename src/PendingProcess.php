@@ -82,11 +82,6 @@ class PendingProcess extends BasePendingProcess
             return $command;
         }
 
-        if (in_array($this->host, ['local', 'localhost', '127.0.0.1'])) {
-            // Return the command directly for local execution
-            return $command;
-        }
-
         $commands = (array) $command; // Ensure the commands are in array format
         $commandsWrapped = [];
 
