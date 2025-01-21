@@ -242,6 +242,20 @@ it('invoke process::concurrently ssh', function (): void {
 
 });
 
+it('invoke process::concurrently ssh with extra options', function (): void {
+    Process::fake();
+
+    $process = Process::ssh($this->basicSshConfig)
+        ->addExtraOption('-o ConnectTimeout=5')
+        ->concurrently(function (Pool $pool): void {
+            $pool->command('ls -al');
+            $pool->command('whoami');
+        });
+
+    expect($process[0]->command())->toBe("ssh -o ConnectTimeout=5 ubuntu@192.178.0.1 'bash -se' << \EOF-PROCESS-SSH".PHP_EOL.'ls -al'.PHP_EOL.'EOF-PROCESS-SSH');
+    expect($process[1]->command())->toBe("ssh -o ConnectTimeout=5 ubuntu@192.178.0.1 'bash -se' << \EOF-PROCESS-SSH".PHP_EOL.'whoami'.PHP_EOL.'EOF-PROCESS-SSH');
+});
+
 it('invoke process::pool', function (): void {
     Process::fake();
 
@@ -269,7 +283,21 @@ it('invoke process::pool ssh', function (): void {
     $results = $process->wait();
     expect($results[0]->command())->toBe("ssh  ubuntu@192.178.0.1 'bash -se' << \EOF-PROCESS-SSH".PHP_EOL.'ls -al'.PHP_EOL.'EOF-PROCESS-SSH');
     expect($results[1]->command())->toBe("ssh  ubuntu@192.178.0.1 'bash -se' << \EOF-PROCESS-SSH".PHP_EOL.'whoami'.PHP_EOL.'EOF-PROCESS-SSH');
+});
 
+it('invoke process::pool ssh with extra options', function (): void {
+    Process::fake();
+
+    $process = Process::ssh($this->basicSshConfig)
+        ->addExtraOption('-o ConnectTimeout=5')
+        ->pool(function (Pool $pool): void {
+            $pool->command('ls -al');
+            $pool->command('whoami');
+        });
+
+    $results = $process->wait();
+    expect($results[0]->command())->toBe("ssh -o ConnectTimeout=5 ubuntu@192.178.0.1 'bash -se' << \EOF-PROCESS-SSH".PHP_EOL.'ls -al'.PHP_EOL.'EOF-PROCESS-SSH');
+    expect($results[1]->command())->toBe("ssh -o ConnectTimeout=5 ubuntu@192.178.0.1 'bash -se' << \EOF-PROCESS-SSH".PHP_EOL.'whoami'.PHP_EOL.'EOF-PROCESS-SSH');
 });
 
 it('exception thrown process run with array', function (): void {
